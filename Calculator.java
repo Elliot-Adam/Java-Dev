@@ -1,8 +1,6 @@
 import javax.swing.*;
-import javax.swing.border.*;
 import java.awt.event.*;
 import java.awt.*;  
-import java.util.HashMap;
 
 public class Calculator implements ActionListener{
     private JButton[] buttons;
@@ -75,7 +73,10 @@ public class Calculator implements ActionListener{
                 if ((int)(total) == total){ display = String.valueOf((int)(total));}
                 else{ display = String.valueOf(total);}
             }
-            catch (Exception exception){ display = "NaN"; }
+            catch (Exception exception){ 
+                display = "NaN"; 
+                System.out.println("FAILURE " + exception);
+            }
         }
         else {
             display += pressed;
