@@ -26,7 +26,7 @@ public class Calculator implements ActionListener{
         JButton div = new JButton("/");
         JButton clr = new JButton("C");
         JButton zero = new JButton("0");
-        JButton equal = new JButton("=");// 0   1    2    3    4    5    6   7      8    9     10   11   12  13   14     15
+        JButton equal = new JButton("=");// 0   1    2    3    4    5    6   7      8    9     10   11   12  13   14    15
         JButton[] buttons = new JButton[] {one,two,three,plus,four,five,six,minus,seven,eight,nine,mult,clr,zero,equal, div};
         return buttons;
     }
@@ -89,8 +89,8 @@ public class Calculator implements ActionListener{
     public static void main(String[] args) {
         javax.swing.SwingUtilities.invokeLater(new Runnable() {
             public void run() {
-                Calculator test = new Calculator();
-                test.Calc_Runner();
+                Calculator mainObj = new Calculator();
+                mainObj.Calc_Runner();
             }
         });
     }
