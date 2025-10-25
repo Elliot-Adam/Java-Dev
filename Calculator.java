@@ -7,7 +7,7 @@ public class Calculator implements ActionListener{
     private double total;
     private String display = "";
     private static JTextArea calc_display = new JTextArea("");
-    private JFrame f = new JFrame();
+    private JFrame f = new JFrame("Elliot's Calculator");
     EvalLogic eval = new EvalLogic();
     
     public static JButton[] getButtons(){
@@ -38,7 +38,7 @@ public class Calculator implements ActionListener{
         final int XDISPLAY_OFFSET = 100;
         
         calc_display.setBounds(XDISPLAY_OFFSET,YDISPLAY_OFFSET,DISPLAY_WIDTH,DISPLAY_HEIGHT);
-        calc_display.setBackground(Color.blue);
+        calc_display.setBackground(Color.CYAN);
         calc_display.setFont(new Font("SERIF",Font.PLAIN, DISPLAY_HEIGHT));
     }
     

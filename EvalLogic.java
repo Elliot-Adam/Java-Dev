@@ -20,8 +20,8 @@ public class EvalLogic {
     }
 
     private Double negChecker(String num){
-        if (num == null){return 0.0;}
-
+        if (num.equals("")){return 0.0;}
+        
         if (num.startsWith("n")){
             return (-1 * Double.parseDouble(num.substring(1)));
         }
@@ -87,25 +87,20 @@ public class EvalLogic {
                     //If j is an operation
                     lhs = negChecker(expr.get(j - 1));
                     rhs = negChecker(expr.get(j + 1));
-
+                    
                     num = oper_map.get(expr.get(j)).apply(lhs,rhs);
                     if (num < 0){numstr = "n" + num.toString().substring(1);}
                     else{numstr = num.toString();}
                     
                     expr.set(j , numstr);
                     expr.remove(j + 1);
-                    System.out.println("EXPR1: " + expr);
                     if (j != 0){ expr.remove(j - 1);}
                 }
             }
-            System.out.println("EXPR2: " + expr);
         }
-        System.out.println("EXPR3: " + expr);
         
         if (expr.size() > 1){throw new Exception();}
-        if (("" + expr.get(0).charAt(0)).equals("n")) {
-            expr.set(0, String.valueOf(-1 * Double.parseDouble(expr.get(0).substring(1))));
-        }
+        expr.set(0,negChecker(expr.get(0)).toString());
         
         return Double.parseDouble(expr.get(0));
     }
