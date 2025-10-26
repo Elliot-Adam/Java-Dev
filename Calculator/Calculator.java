@@ -3,6 +3,22 @@ import java.awt.event.*;
 import java.awt.*;  
 
 public class Calculator implements ActionListener{
+    static class Consts{
+        //Display bar Consts
+        static final int DISPLAY_WIDTH = 200;
+        static final int DISPLAY_HEIGHT = 50;
+        static final int YDISPLAY_OFFSET = 100 - DISPLAY_HEIGHT;
+        static final int XDISPLAY_OFFSET = 100;
+        
+         //Screen Consts
+        static final int SCREEN_WIDTH = 400;
+        static final int SCREEN_HEIGHT = 400;
+        
+        //Button Consts
+        static final int BUTTON_HEIGHT = 50;
+        static final int BUTTON_WIDTH = 50;
+    }
+    
     private JButton[] buttons;
     private double total;
     private String display = "";
@@ -32,32 +48,24 @@ public class Calculator implements ActionListener{
     }
     
     public static void display_setup(){
-        final int DISPLAY_WIDTH = 200;
-        final int DISPLAY_HEIGHT = 50;
-        final int YDISPLAY_OFFSET = 100 - DISPLAY_HEIGHT;
-        final int XDISPLAY_OFFSET = 100;
-        
-        calc_display.setBounds(XDISPLAY_OFFSET,YDISPLAY_OFFSET,DISPLAY_WIDTH,DISPLAY_HEIGHT);
+        calc_display.setBounds(Consts.XDISPLAY_OFFSET,Consts.YDISPLAY_OFFSET,Consts.DISPLAY_WIDTH,Consts.DISPLAY_HEIGHT);
         calc_display.setBackground(Color.CYAN);
-        calc_display.setFont(new Font("SERIF",Font.PLAIN, DISPLAY_HEIGHT));
+        calc_display.setFont(new Font("SERIF",Font.PLAIN, Consts.DISPLAY_HEIGHT));
     }
     
     public void Calc_Runner() {
-        final int SCREEN_WIDTH = 400;
-        final int SCREEN_HEIGHT = 400;
-        final int BUTTON_HEIGHT = 50;
-        final int BUTTON_WIDTH = 50;
+        
         
         buttons = getButtons();
         for (int i = 0; i < buttons.length; i++){
-            buttons[i].setBounds(BUTTON_WIDTH*(i % 4) + 100,BUTTON_HEIGHT*Math.floorDiv(i,4) + 100,BUTTON_WIDTH,BUTTON_HEIGHT);
+            buttons[i].setBounds(Consts.BUTTON_WIDTH*(i % 4) + 100,Consts.BUTTON_HEIGHT*Math.floorDiv(i,4) + 100,Consts.BUTTON_WIDTH,Consts.BUTTON_HEIGHT);
             buttons[i].addActionListener(this);
             f.add(buttons[i]);
         }
         display_setup();
         
         f.add(calc_display);
-        f.setSize(SCREEN_WIDTH, SCREEN_HEIGHT);
+        f.setSize(Consts.SCREEN_WIDTH, Consts.SCREEN_HEIGHT);
         f.setLayout(null);
         f.setVisible(true);
     }
