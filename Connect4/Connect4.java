@@ -50,10 +50,10 @@ public class Connect4 implements MouseInputListener {
         JLabel img = null;
         try{img = new JLabel(new ImageIcon(ImageIO.read(new File("Connect4\\Assets\\piece_" + player + ".png"))));}
         catch (IOException exception) {exception.printStackTrace();}
-        img.setBounds(0,0,100,100);
-        
+        //img.setBounds((column - 1) * frame.getWidth()/7, frame.getHeight() - (board.getTopColumn(column) * frame.getHeight()/7), frame.getWidth()/7,frame.getHeight()/7);
+        img.setBounds(column,0,100,100);
         frame.add(img);
-        System.out.println(img);
+        frame.repaint();        
     }
     
     public void connect_4(){
