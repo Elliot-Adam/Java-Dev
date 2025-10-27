@@ -8,15 +8,15 @@ public class Board {
     private int[] iterColumn(int column){
         int x = column - 1;
         int y = 0;
-
-        while (grid[x][y] != ""){
-            if (grid[x][5] != "") {
+        if (grid[x][5] != null) {
                 return new int[]{column,-1};
-            }
+        }
+
+        while (grid[x][y] != null){
             y++;
         }
 
-        return new int[]{x,y};
+        return new int[]{x + 1,y + 1};
     }
 
     public void addPiece(int column, String piece){
