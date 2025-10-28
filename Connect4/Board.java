@@ -5,19 +5,26 @@ public class Board {
         return grid;
     }
 
-    public void addPiece(int column, String piece){
+    private int[] iterColumn(int column){
         int x = column - 1;
         int y = 0;
+        if (grid[x][5] != null) {
+                return new int[]{column,-1};
+        }
 
-        while (grid[x][y] != ""){
-            if (y > 6) {
-                return;
-            }
+        while (grid[x][y] != null){
             y++;
         }
 
-        grid[x][y] = piece;
+        return new int[]{x + 1,y + 1};
     }
 
-    
+    public void addPiece(int column, String piece){
+        int[] coords = iterColumn(column);
+        grid[coords[0]][coords[1]] = piece;
+    }
+
+    public int getTopColumn(int column){
+        return iterColumn(column)[1];
+    }    
 }
