@@ -35,7 +35,6 @@ public class EvalLogic {
             if (oper_map.get(c) == null){
                 // If i is an integer and not an operation
                 cur += c;
-                System.out.println(cur);
             }
             else{
                 
@@ -59,7 +58,6 @@ public class EvalLogic {
         }
 
         expr.add(cur); 
-        System.out.println("EXPR: " + expr);
         return expr;
     }
     
@@ -69,7 +67,6 @@ public class EvalLogic {
 
         for (int j = 0; j < expr.size(); j++){
             String str = expr.get(j);
-            System.out.println(expr);
             if (oper_map.get(str) != null) {
                 // str is an operation and not an integer
                 Double lhs = 0.0;
@@ -96,8 +93,6 @@ public class EvalLogic {
             }
         }
         
-        assert expr.size() < 2: "Didn't do all operations available";
-        System.out.println("BOTTOM EXPR:" + expr);
         return Double.parseDouble(expr.get(0));
     }
 };
