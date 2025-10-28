@@ -54,8 +54,7 @@ public class Calculator implements ActionListener{
     }
     
     public void Calc_Runner() {
-        
-        
+        System.out.println();
         buttons = getButtons();
         for (int i = 0; i < buttons.length; i++){
             buttons[i].setBounds(Consts.BUTTON_WIDTH*(i % 4) + 100,Consts.BUTTON_HEIGHT*Math.floorDiv(i,4) + 100,Consts.BUTTON_WIDTH,Consts.BUTTON_HEIGHT);
@@ -83,7 +82,8 @@ public class Calculator implements ActionListener{
             }
             catch (Exception exception){ 
                 display = "NaN"; 
-                System.out.println("FAILURE " + exception);
+                System.out.println("FAILURE " + exception + "\n");
+                exception.printStackTrace();
             }
         }
         else {

@@ -7,35 +7,11 @@ public class EvalLogic {
         public Double apply(Double a, Double b);
     }
 
-    private ArrayList<String> decodeInput(ArrayList<String> expr){
-        // Decodes strings to handle negatives
-        for (int i = 0; i < expr.size(); i++){
-            if (expr.get(i).equals("-")){
-                expr.set(i, "+");
-                expr.set(i + 1, "n" + expr.get(i + 1));
-            }
+    private Double negChecker(String str){
+        if (str.startsWith("n")){
+            return -1 * Double.parseDouble(str.substring(1));
         }
-        
-        return expr;
-    }
-
-    private Double negChecker(String num){
-        if (num.equals("")){return 0.0;}
-        
-        if (num.startsWith("n")){
-            return (-1 * Double.parseDouble(num.substring(1)));
-        }
-        return Double.parseDouble(num);
-    }
-
-    private boolean opr_in_expr(String input){
-        String[] oprs = {"+", "-","*","/"};
-        for (String opr : oprs){
-            if (input.contains(opr)){
-                return true;
-            }
-        }
-        return false;
+        return Double.parseDouble(str);
     }
     
     private static HashMap<String,DoubleOperator> getOperMap(){
@@ -59,49 +35,69 @@ public class EvalLogic {
             if (oper_map.get(c) == null){
                 // If i is an integer and not an operation
                 cur += c;
+                System.out.println(cur);
             }
             else{
+                
+                if (c.equals("-")) {
+                    if (cur.length() > 0){
+                        //Used during subtraction
+                        expr.add(cur);
+                        expr.add("+");
+                        cur = "";
+                    }
+                    //Used when there's an operation before (e.g mulitplying by a negative number)
+                    cur += "n";
+                    
+                    continue;
+                }
                 expr.add(cur);
                 cur = "";
                 expr.add(c);
+
             }
         }
-        expr.add(cur);
+
+        expr.add(cur); 
+        System.out.println("EXPR: " + expr);
         return expr;
     }
     
     public Double eval(String input) throws Exception{
         HashMap<String,DoubleOperator> oper_map = getOperMap();
-        ArrayList<String> expr = decodeInput(parseExpr(input));
-        //System.out.println(expr); // DEBUG
-        
-        Double num;
-        String numstr;
-        Double lhs;
-        Double rhs;
-        //While there are still operators in the expression
-        while (opr_in_expr(String.join("",expr))) {
-            for (int j = 0; j < expr.size(); j++){
-                DoubleOperator func = oper_map.get(expr.get(j));
-                if (func != null){
-                    //If j is an operation
+        ArrayList<String> expr = parseExpr(input);
+
+        for (int j = 0; j < expr.size(); j++){
+            String str = expr.get(j);
+            System.out.println(expr);
+            if (oper_map.get(str) != null) {
+                // str is an operation and not an integer
+                Double lhs = 0.0;
+                Double rhs = 0.0;
+                try{
                     lhs = negChecker(expr.get(j - 1));
                     rhs = negChecker(expr.get(j + 1));
-                    
-                    num = oper_map.get(expr.get(j)).apply(lhs,rhs);
-                    if (num < 0){numstr = "n" + num.toString().substring(1);}
-                    else{numstr = num.toString();}
-                    
-                    expr.set(j , numstr);
+
                     expr.remove(j + 1);
-                    if (j != 0){ expr.remove(j - 1);}
+                    expr.remove(j - 1);
                 }
+                catch (IndexOutOfBoundsException exception) {
+                    if (str.equals("*") || str.equals("/")){
+                        if (lhs == 0.0) {
+                            lhs = 1.0;
+                        }
+                        if (rhs == 0.0) {
+                            rhs = 1.0;
+                        }
+                    }
+                }
+
+                expr.set(j - 1, String.valueOf(oper_map.get(str).apply(lhs, rhs)));
             }
         }
         
-        if (expr.size() > 1){throw new Exception();}
-        expr.set(0,negChecker(expr.get(0)).toString());
-        
+        assert expr.size() < 2: "Didn't do all operations available";
+        System.out.println("BOTTOM EXPR:" + expr);
         return Double.parseDouble(expr.get(0));
     }
 };
