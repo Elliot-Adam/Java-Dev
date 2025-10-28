@@ -93,6 +93,11 @@ public class EvalLogic {
             }
         }
         
-        return Double.parseDouble(expr.get(0));
+        if (expr.get(0).equals("-Infinity") || expr.get(0).equals("Infinity")){throw new Exception("Divide by zero error");}
+        Double num = Double.parseDouble(expr.get(0));
+        num *= Math.pow(10, 6);
+        num = Double.valueOf(Math.round(num));
+        num /= Math.pow(10,6); 
+        return num;
     }
 };
