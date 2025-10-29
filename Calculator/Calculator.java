@@ -91,7 +91,6 @@ public class Calculator implements ActionListener{
         }
         calc_display.setText(display);
         f.add(calc_display);
-        //System.out.println(display); // DEBUG
     }
     
     public static void main(String[] args) {

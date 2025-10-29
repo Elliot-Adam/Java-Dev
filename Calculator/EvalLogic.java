@@ -1,10 +1,18 @@
 import java.util.HashMap;
 import java.util.ArrayList;
+import java.util.Set;
 
 public class EvalLogic {
     @FunctionalInterface
     private interface DoubleOperator {
         public Double apply(Double a, Double b);
+    }
+    
+    private boolean operInExpr(ArrayList<String> expr, Set<String> opers){
+        for (String str : expr){
+            if (opers.contains(str)){return true;}
+        }
+        return false;
     }
 
     private Double negChecker(String str){
@@ -14,18 +22,61 @@ public class EvalLogic {
         return Double.parseDouble(str);
     }
     
-    private static HashMap<String,DoubleOperator> getOperMap(){
-        HashMap<String,DoubleOperator> oper_map = new HashMap<String,DoubleOperator>();
-        oper_map.put("+", (n1,n2)->{return n1 + n2;});
-        oper_map.put("-", (n1,n2)->{return n1 - n2;});
-        oper_map.put("*", (n1,n2)->{return n1 * n2;});
-        oper_map.put("/", (n1,n2)->{return n1 / n2;});
+    private ArrayList<String> doOper(ArrayList<String> expr, HashMap<String, DoubleOperator> opers){
+        while (operInExpr(expr,opers.keySet())) {
+            for (int j = 0; j < expr.size(); j++){
+                String str = expr.get(j);
+                if (opers.get(str) != null) {
+                    // str is an operation and not an integer
+                    Double lhs = null;
+                    Double rhs = null;
+                    try{
+                        lhs = negChecker(expr.get(j - 1));
+                        rhs = negChecker(expr.get(j + 1));
+                                
+                        expr.remove(j + 1);
+                        expr.remove(j - 1);
+                    }
+                    catch (IndexOutOfBoundsException exception) {
+                        if (str.equals("*") || str.equals("/")){
+                            if (lhs == null) {
+                                lhs = 1.0;
+                            }
+                            if (rhs == null) {
+                                rhs = 1.0;
+                            }
+                        }
+                    }
+                    expr.set(j - 1, String.valueOf(opers.get(str).apply(lhs, rhs)));
+                    break;
+                }
+            }
+        }
         
+        return expr;
+    }
+    
+    private static HashMap<String,DoubleOperator> getOperMap(String operation){
+        HashMap<String,DoubleOperator> oper_map = new HashMap<String,DoubleOperator>();
+        switch (operation){
+            case "AS":
+                oper_map.put("+", (n1,n2)->{return n1 + n2;});
+                oper_map.put("-", (n1,n2)->{return n1 - n2;});
+                break;
+                
+            case "MD":
+                oper_map.put("*", (n1,n2)->{return n1 * n2;});
+                oper_map.put("/", (n1,n2)->{return n1 / n2;});
+                break;
+                
+        }
         return oper_map;
     }
     
     private ArrayList<String> parseExpr(String input){
-        HashMap<String,DoubleOperator> oper_map = getOperMap();
+        HashMap<String,DoubleOperator> oper_map = getOperMap("AS");
+        oper_map.putAll(getOperMap("MD"));
+        
         ArrayList<String> expr = new ArrayList<String>();
         String cur = "";
         String c;
@@ -37,7 +88,6 @@ public class EvalLogic {
                 cur += c;
             }
             else{
-                
                 if (c.equals("-")) {
                     if (cur.length() > 0){
                         //Used during subtraction
@@ -47,7 +97,6 @@ public class EvalLogic {
                     }
                     //Used when there's an operation before (e.g mulitplying by a negative number)
                     cur += "n";
-                    
                     continue;
                 }
                 expr.add(cur);
@@ -62,36 +111,11 @@ public class EvalLogic {
     }
     
     public Double eval(String input) throws Exception{
-        HashMap<String,DoubleOperator> oper_map = getOperMap();
+        HashMap<String,DoubleOperator> oper_map_as = getOperMap("AS");
+        HashMap<String,DoubleOperator> oper_map_md = getOperMap("MD");
         ArrayList<String> expr = parseExpr(input);
-
-        for (int j = 0; j < expr.size(); j++){
-            String str = expr.get(j);
-            if (oper_map.get(str) != null) {
-                // str is an operation and not an integer
-                Double lhs = 0.0;
-                Double rhs = 0.0;
-                try{
-                    lhs = negChecker(expr.get(j - 1));
-                    rhs = negChecker(expr.get(j + 1));
-
-                    expr.remove(j + 1);
-                    expr.remove(j - 1);
-                }
-                catch (IndexOutOfBoundsException exception) {
-                    if (str.equals("*") || str.equals("/")){
-                        if (lhs == 0.0) {
-                            lhs = 1.0;
-                        }
-                        if (rhs == 0.0) {
-                            rhs = 1.0;
-                        }
-                    }
-                }
-
-                expr.set(j - 1, String.valueOf(oper_map.get(str).apply(lhs, rhs)));
-            }
-        }
+        expr = doOper(expr,oper_map_md);
+        expr = doOper(expr,oper_map_as);
         
         if (expr.get(0).equals("-Infinity") || expr.get(0).equals("Infinity")){throw new Exception("Divide by zero error");}
         Double num = Double.parseDouble(expr.get(0));
