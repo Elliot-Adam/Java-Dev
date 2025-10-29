@@ -55,6 +55,7 @@ public class Calculator implements ActionListener{
     
     public void Calc_Runner() {
         System.out.println();
+        f.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         buttons = getButtons();
         for (int i = 0; i < buttons.length; i++){
             buttons[i].setBounds(Consts.BUTTON_WIDTH*(i % 4) + Consts.XDISPLAY_OFFSET,Consts.BUTTON_HEIGHT*Math.floorDiv(i,4) + Consts.YDISPLAY_OFFSET + Consts.DISPLAY_HEIGHT,Consts.BUTTON_WIDTH,Consts.BUTTON_HEIGHT);
