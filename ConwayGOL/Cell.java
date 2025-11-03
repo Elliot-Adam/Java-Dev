@@ -17,6 +17,7 @@ public class Cell{
     public Cell(int x, int y){
        this.x = x;
        this.y = y;
+       alive = false;
     }
 
     public ArrayList<Cell> getNeighbors(Cell[][] board){

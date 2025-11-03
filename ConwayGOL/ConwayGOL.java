@@ -4,7 +4,6 @@ import javax.imageio.ImageIO;
 import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
-import javax.swing.JPanel;
 import javax.swing.ImageIcon;
 import javax.swing.Timer;
 
@@ -15,11 +14,8 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
-import java.awt.image.BufferedImage;
-import java.awt.image.VolatileImage;
 import java.io.File;
 import java.io.IOException;
-import java.nio.Buffer;
 import java.util.HashMap;
 import java.util.ArrayList;
 
@@ -95,12 +91,11 @@ public class ConwayGOL implements ActionListener , MouseListener {
     
     @Override
     public void actionPerformed(ActionEvent e){
-        HashMap<GameStatus, GameStatus> switcher = new HashMap<GameStatus, GameStatus>(){{
-            put(GameStatus.PLAYING,GameStatus.PAUSED);
-            put(GameStatus.PAUSED,GameStatus.PLAYING);
-        }};
-
         if (e.getSource() == playButton){
+            HashMap<GameStatus, GameStatus> switcher = new HashMap<GameStatus, GameStatus>(){{
+                put(GameStatus.PLAYING,GameStatus.PAUSED);
+                put(GameStatus.PAUSED,GameStatus.PLAYING);
+            }};
             gameStatus = switcher.get(gameStatus);
             switch (gameStatus){
                 case PLAYING:
@@ -118,15 +113,23 @@ public class ConwayGOL implements ActionListener , MouseListener {
         }
 
         if (e.getSource() == timer){
+            //Every tick while active
+            ArrayList<Cell> delCells = new ArrayList<Cell>();
             for (Cell cell : aliveCells){
-                boolean status = cell.checkStatus(board);
                 ArrayList<Cell> neighbors = cell.getNeighbors(board);
+                neighbors.add(cell);
+                for (Cell local : neighbors){
+                    boolean status = local.checkStatus(board);
+                    if (!status){
+                        delCells.add(local);
+                    }
+                }                
             }
-
+            for (Cell cell : delCells) {
+                cell.alive = false;
+                
+            }
         }
-        
-
-        
     }
 
     @Override
@@ -137,7 +140,7 @@ public class ConwayGOL implements ActionListener , MouseListener {
 
         //System.out.println(e.getPoint());
         if (board[e.getX() / PIXEL_WIDTH][e.getY() / PIXEL_HEIGHT] == null){
-            Cell newCell =  new Cell(e.getX() / PIXEL_WIDTH, e.getY() / PIXEL_HEIGHT)
+            Cell newCell =  new Cell(e.getX() / PIXEL_WIDTH, e.getY() / PIXEL_HEIGHT);
             board[e.getX() / PIXEL_WIDTH][e.getY() / PIXEL_HEIGHT] = newCell;
             aliveCells.add(newCell);
         }
