@@ -14,6 +14,12 @@ public class Cell{
     Any dead cell with exactly three live neighbours comes to life.
     */
     
+    public Cell(){
+        this.x = -1;
+        this.y = -1;
+        alive = false;
+    }
+
     public Cell(int x, int y){
        this.x = x;
        this.y = y;

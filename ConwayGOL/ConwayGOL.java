@@ -18,6 +18,7 @@ import java.io.File;
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.ArrayList;
+import java.util.Arrays;
 
 public class ConwayGOL implements ActionListener , MouseListener {
     public void mouseEntered(MouseEvent e){};
@@ -28,8 +29,8 @@ public class ConwayGOL implements ActionListener , MouseListener {
     final int SCREEN_WIDTH = 500;
     final int SCREEN_HEIGHT = 500;
 
-    final int PIXEL_WIDTH = 5;
-    final int PIXEL_HEIGHT = 5;
+    final int PIXEL_WIDTH = 1;
+    final int PIXEL_HEIGHT = 1;
 
     Timer timer = new Timer(100,this);
     private Rectangle rect = new Rectangle();
@@ -37,8 +38,17 @@ public class ConwayGOL implements ActionListener , MouseListener {
         @Override
         public void paintComponent(Graphics g) {
             Graphics2D g2d = (Graphics2D)g;
-            g2d.fill3DRect(rect.x,rect.y,rect.width,rect.height,false);
-            //g2d.draw(rect);
+            switch (drawStatus) {
+                case ADD:
+                    System.out.println("HERE3");
+                    g2d.fill3DRect(rect.x,rect.y,rect.width,rect.height,false);
+                    break;
+            
+                case DELETE:
+                    g2d.clearRect(rect.x,rect.y,rect.width,rect.height);
+                    break;
+            }
+           
     }};
     
     private JFrame mainFrame = new JFrame(){};
@@ -48,12 +58,18 @@ public class ConwayGOL implements ActionListener , MouseListener {
     ArrayList<Cell> aliveCells = new ArrayList<Cell>();
     private Rectangle playButtonRect = new Rectangle(0,0,50,50);
     
+    enum DrawStatus {
+        DELETE,
+        ADD
+    }
+
     enum GameStatus {
         PAUSED,
         PLAYING
     }
     
     private GameStatus gameStatus = GameStatus.PAUSED;
+    private DrawStatus drawStatus = DrawStatus.ADD;
     
     
 
@@ -85,6 +101,9 @@ public class ConwayGOL implements ActionListener , MouseListener {
     }
     
     public void gameOfLife(){
+        for (Cell[] column : board){
+            Arrays.fill(column,new Cell());
+        }
         displaySetup();
         mainFrame.addMouseListener(this);
     }
@@ -126,8 +145,8 @@ public class ConwayGOL implements ActionListener , MouseListener {
                 }                
             }
             for (Cell cell : delCells) {
-                cell.alive = false;
-                
+                board[cell.x][cell.y].alive = false;
+                aliveCells.remove(cell);
             }
         }
     }
@@ -139,14 +158,31 @@ public class ConwayGOL implements ActionListener , MouseListener {
         }
 
         //System.out.println(e.getPoint());
-        if (board[e.getX() / PIXEL_WIDTH][e.getY() / PIXEL_HEIGHT] == null){
+        Cell clickedCell = board[e.getX() / PIXEL_WIDTH][e.getY() / PIXEL_HEIGHT]; 
+        if (!clickedCell.alive){
+            // Clicked on a dead cell
             Cell newCell =  new Cell(e.getX() / PIXEL_WIDTH, e.getY() / PIXEL_HEIGHT);
+            newCell.alive = true;
             board[e.getX() / PIXEL_WIDTH][e.getY() / PIXEL_HEIGHT] = newCell;
             aliveCells.add(newCell);
+            System.out.println("HERE2");
+            drawStatus = DrawStatus.ADD;
+            rect.setBounds(e.getX() ,e.getY(),PIXEL_WIDTH,PIXEL_HEIGHT);
+            screenLabel.paintImmediately(rect);
         }
 
-        rect.setBounds(e.getX() - 5 ,e.getY() - 25,PIXEL_WIDTH,PIXEL_HEIGHT);
-        screenLabel.paintImmediately(rect);
+        else {
+            board[e.getX() / PIXEL_WIDTH][e.getY() / PIXEL_HEIGHT].alive = false;
+            aliveCells.remove(clickedCell);
+
+            drawStatus = DrawStatus.DELETE;
+            rect.setBounds(e.getX() - 15 ,e.getY() - 35,PIXEL_WIDTH + 5,PIXEL_HEIGHT + 5);
+            screenLabel.paintImmediately(rect);
+            System.out.println("HERE");
+            
+            //screenLabel.remove(screenLabel.getComponentAt(e.getX(), e.getY()));
+            //screenLabel.repaint();
+        }
     };
     
     public static void main(String[] args) {
